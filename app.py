@@ -1,23 +1,40 @@
-app.py
 from flask import Flask, jsonify, request
+
 app = Flask(__name__)
 
+# Home route
 @app.route('/')
 def home():
-return "Welcome to my Flask API!"
+    return jsonify({
+        "message": "Welcome to my Flask API!",
+        "status": "API is running"
+    })
 
-@app.route('/student')
+# Student information
+@app.route('/student', methods=['GET'])
 def get_student():
-return jsonify({
-"name": "Your Name",
-"grade": 10,
-"section": "Zechariah"
-})
+    student = {
+        "name": "Your Name",
+        "grade": 10,
+        "section": "Zechariah"
+    }
+    return jsonify(student)
 
-Procfile
-web: gunicorn app:app --bind 0.0.0.0:$PORT
-requirements.txt
-Flask==3.1.2
-gunicorn==23.0.0
-runtime.txt
-python-3.12.0
+# Add student using POST
+@app.route('/add_student', methods=['POST'])
+def add_student():
+    data = request.get_json()
+
+    new_student = {
+        "name": data.get("name"),
+        "grade": data.get("grade"),
+        "section": data.get("section")
+    }
+
+    return jsonify({
+        "message": "Student added successfully",
+        "student": new_student
+    })
+
+if __name__ == "__main__":
+    app.run(debug=True)
